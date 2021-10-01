@@ -1,162 +1,104 @@
-# Python program to create a simple GUI
-# calculator using Tkinter
-
-# import everything from tkinter module
 from tkinter import *
+from tkinter import messagebox
 
-# globally declare the expression variable
-expression = ""
+calculator = Tk()
+calculator.title("CALCULATOR")
+calculator.resizable(0, 1)#remove or change this in order to get different screen sizes
+
+class Application(Frame):
+	def __init__(self, master, *args, **kwargs):
+		Frame.__init__(self, master, *args, **kwargs)
+		self.createWidgets()
+
+	def replaceText(self, text):
+		self.display.delete(0, END)
+		self.display.insert(0, text)
+
+	def appendToDisplay(self, text):
+		self.entryText = self.display.get()
+		self.textLength = len(self.entryText)
+
+		if self.entryText == "0":
+			self.replaceText(text)
+		else:
+			self.display.insert(self.textLength, text)
+
+	def calculateExpression(self):#python's calculate function 
+		self.expression = self.display.get()
+		self.expression = self.expression.replace("%", "/ 100")
+
+		try:
+			self.result = eval(self.expression)
+			self.replaceText(self.result)
+		except:
+			messagebox.showinfo("ERROR", "Invalid input", icon="warning", parent=calculator)
+
+	def clearText(self):#clears imput on pressing C on Calculator
+		self.replaceText("0")
+
+	def createWidgets(self):
+		self.display = Entry(self, font=("Helvetica", 16), borderwidth=0, relief=RAISED, justify=RIGHT)
+		self.display.insert(0, "0")
+		self.display.grid(row=0, column=0, columnspan=5)
+
+#This is the First Row
+		self.sevenButton = Button(self, font=("Helvetica", 11), text="7", borderwidth=0, command=lambda: self.appendToDisplay("7"))
+		self.sevenButton.grid(row=1, column=0, sticky="NWNESWSE")
+
+		self.eightButton = Button(self, font=("Helvetica", 11), text="8", borderwidth=0, command=lambda: self.appendToDisplay("8"))
+		self.eightButton.grid(row=1, column=1, sticky="NWNESWSE")
+
+		self.nineButton = Button(self, font=("Helvetica", 11), text="9", borderwidth=0, command=lambda: self.appendToDisplay("9"))
+		self.nineButton.grid(row=1, column=2, sticky="NWNESWSE")
+
+		self.timesButton = Button(self, font=("Helvetica", 11), text="*", borderwidth=0, command=lambda: self.appendToDisplay("*"))
+		self.timesButton.grid(row=1, column=3, sticky="NWNESWSE")
+
+		self.clearButton = Button(self, font=("Helvetica", 11), text="C", borderwidth=0, command=lambda: self.clearText())
+		self.clearButton.grid(row=1, column=4, sticky="NWNESWSE")
+
+#This is the Second Row
+		self.fourButton = Button(self, font=("Helvetica", 11), text="4", borderwidth=0, command=lambda: self.appendToDisplay("4"))
+		self.fourButton.grid(row=2, column=0, sticky="NWNESWSE")
+
+		self.fiveButton = Button(self, font=("Helvetica", 11), text="5", borderwidth=0, command=lambda: self.appendToDisplay("5"))
+		self.fiveButton.grid(row=2, column=1, sticky="NWNESWSE")
+
+		self.sixButton = Button(self, font=("Helvetica", 11), text="6", borderwidth=0, command=lambda: self.appendToDisplay("6"))
+		self.sixButton.grid(row=2, column=2, sticky="NWNESWSE")
+
+		self.divideButton = Button(self, font=("Helvetica", 11), text="/", borderwidth=0, command=lambda: self.appendToDisplay("/"))
+		self.divideButton.grid(row=2, column=3, sticky="NWNESWSE")
+
+		self.percentageButton = Button(self, font=("Helvetica", 11), text="%", borderwidth=0, command=lambda: self.appendToDisplay("%"))
+		self.percentageButton.grid(row=2, column=4, sticky="NWNESWSE")
+
+#This is the Third Row
+		self.oneButton = Button(self, font=("Helvetica", 11), text="1", borderwidth=0, command=lambda: self.appendToDisplay("1"))
+		self.oneButton.grid(row=3, column=0, sticky="NWNESWSE")
+
+		self.twoButton = Button(self, font=("Helvetica", 11), text="2", borderwidth=0, command=lambda: self.appendToDisplay("2"))
+		self.twoButton.grid(row=3, column=1, sticky="NWNESWSE")
+
+		self.threeButton = Button(self, font=("Helvetica", 11), text="3", borderwidth=0, command=lambda: self.appendToDisplay("3"))
+		self.threeButton.grid(row=3, column=2, sticky="NWNESWSE")
+
+		self.minusButton = Button(self, font=("Helvetica", 11), text="-", borderwidth=0, command=lambda: self.appendToDisplay("-"))
+		self.minusButton.grid(row=3, column=3, sticky="NWNESWSE")
+
+		self.equalsButton = Button(self, font=("Helvetica", 11), text="=", borderwidth=0, command=lambda: self.calculateExpression())
+		self.equalsButton.grid(row=3, column=4, sticky="NWNESWSE", rowspan=2)
+
+#This is the Fourth Row
+		self.zeroButton = Button(self, font=("Helvetica", 11), text="0", borderwidth=0, command=lambda: self.appendToDisplay("0"))
+		self.zeroButton.grid(row=4, column=0, columnspan=2, sticky="NWNESWSE")
+
+		self.dotButton = Button(self, font=("Helvetica", 11), text=".", borderwidth=0, command=lambda: self.appendToDisplay("."))
+		self.dotButton.grid(row=4, column=2, sticky="NWNESWSE")
+
+		self.plusButton = Button(self, font=("Helvetica", 11), text="+", borderwidth=0, command=lambda: self.appendToDisplay("+"))
+		self.plusButton.grid(row=4, column=3, sticky="NWNESWSE")
 
 
-# Function to update expression
-# in the text entry box
-def press(num):
-	# point out the global expression variable
-	global expression
-
-	# concatenation of string
-	expression = expression + str(num)
-
-	# update the expression by using set method
-	equation.set(expression)
-
-
-# Function to evaluate the final expression
-def equalpress():
-	# Try and except statement is used
-	# for handling the errors like zero
-	# division error etc.
-
-	# Put that code inside the try block
-	# which may generate the error
-	try:
-
-		global expression
-
-		# eval function evaluate the expression
-		# and str function convert the result
-		# into string
-		total = str(eval(expression))
-
-		equation.set(total)
-
-		# initialize the expression variable
-		# by empty string
-		expression = ""
-
-	# if error is generate then handle
-	# by the except block
-	except:
-
-		equation.set(" error ")
-		expression = ""
-
-
-# Function to clear the contents
-# of text entry box
-def clear():
-	global expression
-	expression = ""
-	equation.set("")
-
-
-# Driver code
-if __name__ == "__main__":
-	# create a GUI window
-	gui = Tk()
-
-	# set the background colour of GUI window
-	gui.configure(background="light green")
-
-	# set the title of GUI window
-	gui.title("Simple Calculator")
-
-	# set the configuration of GUI window
-	gui.geometry("270x150")
-
-	# StringVar() is the variable class
-	# we create an instance of this class
-	equation = StringVar()
-
-	# create the text entry box for
-	# showing the expression .
-	expression_field = Entry(gui, textvariable=equation)
-
-	# grid method is used for placing
-	# the widgets at respective positions
-	# in table like structure .
-	expression_field.grid(columnspan=4, ipadx=70)
-
-	# create a Buttons and place at a particular
-	# location inside the root window .
-	# when user press the button, the command or
-	# function affiliated to that button is executed .
-	button1 = Button(gui, text=' 1 ', fg='black', bg='red',
-					command=lambda: press(1), height=1, width=7)
-	button1.grid(row=2, column=0)
-
-	button2 = Button(gui, text=' 2 ', fg='black', bg='red',
-					command=lambda: press(2), height=1, width=7)
-	button2.grid(row=2, column=1)
-
-	button3 = Button(gui, text=' 3 ', fg='black', bg='red',
-					command=lambda: press(3), height=1, width=7)
-	button3.grid(row=2, column=2)
-
-	button4 = Button(gui, text=' 4 ', fg='black', bg='red',
-					command=lambda: press(4), height=1, width=7)
-	button4.grid(row=3, column=0)
-
-	button5 = Button(gui, text=' 5 ', fg='black', bg='red',
-					command=lambda: press(5), height=1, width=7)
-	button5.grid(row=3, column=1)
-
-	button6 = Button(gui, text=' 6 ', fg='black', bg='red',
-					command=lambda: press(6), height=1, width=7)
-	button6.grid(row=3, column=2)
-
-	button7 = Button(gui, text=' 7 ', fg='black', bg='red',
-					command=lambda: press(7), height=1, width=7)
-	button7.grid(row=4, column=0)
-
-	button8 = Button(gui, text=' 8 ', fg='black', bg='red',
-					command=lambda: press(8), height=1, width=7)
-	button8.grid(row=4, column=1)
-
-	button9 = Button(gui, text=' 9 ', fg='black', bg='red',
-					command=lambda: press(9), height=1, width=7)
-	button9.grid(row=4, column=2)
-
-	button0 = Button(gui, text=' 0 ', fg='black', bg='red',
-					command=lambda: press(0), height=1, width=7)
-	button0.grid(row=5, column=0)
-
-	plus = Button(gui, text=' + ', fg='black', bg='red',
-				command=lambda: press("+"), height=1, width=7)
-	plus.grid(row=2, column=3)
-
-	minus = Button(gui, text=' - ', fg='black', bg='red',
-				command=lambda: press("-"), height=1, width=7)
-	minus.grid(row=3, column=3)
-
-	multiply = Button(gui, text=' * ', fg='black', bg='red',
-					command=lambda: press("*"), height=1, width=7)
-	multiply.grid(row=4, column=3)
-
-	divide = Button(gui, text=' / ', fg='black', bg='red',
-					command=lambda: press("/"), height=1, width=7)
-	divide.grid(row=5, column=3)
-
-	equal = Button(gui, text=' = ', fg='black', bg='red',
-				command=equalpress, height=1, width=7)
-	equal.grid(row=5, column=2)
-
-	clear = Button(gui, text='Clear', fg='black', bg='red',
-				command=clear, height=1, width=7)
-	clear.grid(row=5, column='1')
-
-	Decimal= Button(gui, text='.', fg='black', bg='red',
-					command=lambda: press('.'), height=1, width=7)
-	Decimal.grid(row=6, column=0)
-	# start the GUI
-	gui.mainloop()
+app = Application(calculator).grid()		
+calculator.mainloop()
